@@ -1,0 +1,31 @@
+default:
+  tags:
+   - podman
+  
+stages:
+  - clone
+  - build
+
+# Job 1 : clone du dépôt (image super légère)
+clone_repo:
+  stage: clone
+  image: alpine/git
+  script:
+    - git clone ${{values.git_url}} app/${{values.app_name}}
+  artifacts:
+    paths:
+      - app/app_name
+    expire_in: 1h   # on garde les sources 1h (modifiable)
+build_image_job:
+  stage: build
+  image: registry.redhat.io/rhel8/buildah:latest
+  variables:
+# Below 2 lines are needed to make sure the runner uses appropriate service     # account and scc.
+    KUBERNETES_SERVICE_ACCOUNT_OVERWRITE: podman-sa
+    KUBERNETES_POD_ANNOTATIONS_1: "openshift.io/required-scc=podman-scc"
+  dependencies:
+    - clone_repo
+  script:
+    - cd app/${{values.app_name}}   # vérifier que les fichiers sont là
+    - buildah build -t testimage:1.0  .
+

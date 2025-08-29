@@ -1,0 +1,53 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: secure-deployment
+  title: Deliver your app securily
+  description: Deliver your app securily
+  tags:
+    - ai
+    - recommended
+spec:
+  owner: rhdh
+  type: service
+  parameters:
+    - title: What is the git repo URL ?
+      required:
+        - gitURL
+        - registryURL
+      properties:
+        gitURL:
+          title: Git repo URL
+          type: string
+          default: https://github.com/gestrem
+        registryURL:
+          title: Registry to store your work
+          type: string 
+  
+  steps:
+    - id: template
+      name: Fetch Skeleton + Template
+      action: fetch:template
+      input:
+        url: ./skeleton
+        values:
+          gitURL: ${{ parameters.gitURL }}
+          registryURL: ${{ parameters.registryURL }}
+          owner: ${{ user.entity.metadata.name }}
+          cluster: apps.cluster-tmw24.tmw24.sandbox3294.opentlc.com
+          host: ${{ parameters.repo.host }}
+          port: 8080
+
+    - id: publish
+      name: Publish
+      action: publish:gitlab
+      input:
+        repoUrl: "${{ parameters.repo.host }}?owner=${{ parameters.repo.owner }}&repo=secure-build"
+        repoVisibility: public
+
+    - id: register
+      name: Register
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+        catalogInfoPath: "/catalog-info.yaml"
