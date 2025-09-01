@@ -4,7 +4,10 @@ metadata:
   name: secure-build-templates
   annotations:
     github.com/project-slug: rh-opencodequest-origins/secure-build-templates
-spec:
-  type: other
-  lifecycle: unknown
-  owner: user1
+  tags:
+      - java
+      - quarkus
+  links:
+      - url: https://google.com
+        title: OpenShift Dev Spaces (VS Code)
+        icon: web
