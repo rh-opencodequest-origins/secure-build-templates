@@ -1,0 +1,10 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: secure-build-templates
+  annotations:
+    github.com/project-slug: rh-opencodequest-origins/secure-build-templates
+spec:
+  type: other
+  lifecycle: unknown
+  owner: gestrem
